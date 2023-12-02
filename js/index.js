@@ -57,7 +57,6 @@ const moveX = (input) => {
   if (box.velocityX < 5) box.velocityX += box.acceleration;
   canvasRendering.clearRect(0, 0, testContainer.width, testContainer.height);
   canvasRendering.fillRect(box.x, box.y, box.width, box.height);
-  requestAnimationFrame(moveX);
 };
 
 let animationTimer = false;

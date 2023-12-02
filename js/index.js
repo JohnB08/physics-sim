@@ -23,7 +23,8 @@ let box = {
   width: 10,
   height: 10,
   velocityY: -10,
-  velocityX: 0.2,
+  velocityRight: 10,
+  velocityLeft: -10,
   gravity: 0.5,
   acceleration: 0.5,
 };
@@ -52,11 +53,22 @@ const fallingAnimation = () => {
 
 fallingAnimation();
 
-const moveX = (input) => {
-  box.x += box.velocityX * input;
-  if (box.velocityX < 5) box.velocityX += box.acceleration;
+const moveRight = () => {
+  if (box.velocityRight === 0) return;
+  box.x += box.velocityRight;
+  box.velocityRight -= box.acceleration;
   canvasRendering.clearRect(0, 0, testContainer.width, testContainer.height);
   canvasRendering.fillRect(box.x, box.y, box.width, box.height);
+  requestAnimationFrame(moveRight);
+};
+
+const moveLeft = () => {
+  if (box.velocityLeft === 0) return;
+  box.x += box.velocityLeft;
+  box.velocityLeft += box.acceleration;
+  canvasRendering.clearRect(0, 0, testContainer.width, testContainer.height);
+  canvasRendering.fillRect(box.x, box.y, box.width, box.height);
+  requestAnimationFrame(moveLeft);
 };
 
 let animationTimer = false;
@@ -67,6 +79,11 @@ document.addEventListener("keydown", (event) => {
     console.log(box);
     animationTimer = fallingAnimation();
     console.log(animationTimer);
-  } else if (event.key === "a") moveX(-1);
-  else if (event.key === "d") moveX(1);
+  } else if (event.key === "a") {
+    box.velocityLeft = -4;
+    moveLeft();
+  } else if (event.key === "d") {
+    box.velocityRight = 4;
+    moveRight();
+  }
 });

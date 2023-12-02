@@ -28,6 +28,11 @@ let box = {
   gravity: 0.5,
   acceleration: 0.5,
 };
+
+const platforms = [
+  { x: 100, y: 550, width: 200, height: 10 },
+  { x: 250, y: 500, width: 100, height: 10 },
+];
 let bounceGradient = -0;
 let bounceIncrement = 0;
 const setPromise = async (timer) => {
@@ -41,7 +46,30 @@ console.log(canvasRendering);
 const fallingAnimation = () => {
   box.y += box.velocityY;
   box.velocityY += box.gravity;
+
+  for (const platform of platforms) {
+    if (
+      box.x < platform.x + platform.width &&
+      box.x + box.width > platform.x &&
+      box.y + box.height > platform.y &&
+      box.y < platform.y + platform.height
+    ) {
+      box.y = platform.y - box.height;
+      box.velocityY = 0;
+      animationTimer = false;
+      return;
+    }
+  }
+
   canvasRendering.clearRect(0, 0, testContainer.width, testContainer.height);
+  for (const platform of platforms) {
+    canvasRendering.fillRect(
+      platform.x,
+      platform.y,
+      platform.width,
+      platform.height
+    );
+  }
   canvasRendering.fillRect(box.x, box.y, box.width, box.height);
   if (box.y + box.height >= testContainer.height) {
     box.y = 590;
@@ -58,6 +86,26 @@ const moveRight = () => {
   box.x += box.velocityRight;
   box.velocityRight -= box.acceleration;
   canvasRendering.clearRect(0, 0, testContainer.width, testContainer.height);
+  for (const platform of platforms) {
+    canvasRendering.fillRect(
+      platform.x,
+      platform.y,
+      platform.width,
+      platform.height
+    );
+  }
+  for (const platform of platforms) {
+    if (
+      box.x > platform.x + platform.width &&
+      box.x + box.width < platform.x &&
+      box.y + box.height > platform.y &&
+      box.y < platform.y + platform.height
+    ) {
+      box.y = platform.y - box.height;
+      box.velocityY = 0;
+      fallingAnimation();
+    }
+  }
   canvasRendering.fillRect(box.x, box.y, box.width, box.height);
   requestAnimationFrame(moveRight);
 };
@@ -67,6 +115,14 @@ const moveLeft = () => {
   box.x += box.velocityLeft;
   box.velocityLeft += box.acceleration;
   canvasRendering.clearRect(0, 0, testContainer.width, testContainer.height);
+  for (const platform of platforms) {
+    canvasRendering.fillRect(
+      platform.x,
+      platform.y,
+      platform.width,
+      platform.height
+    );
+  }
   canvasRendering.fillRect(box.x, box.y, box.width, box.height);
   requestAnimationFrame(moveLeft);
 };
@@ -80,10 +136,10 @@ document.addEventListener("keydown", (event) => {
     animationTimer = fallingAnimation();
     console.log(animationTimer);
   } else if (event.key === "a") {
-    box.velocityLeft = -4;
+    box.velocityLeft = -8;
     moveLeft();
   } else if (event.key === "d") {
-    box.velocityRight = 4;
+    box.velocityRight = 8;
     moveRight();
   }
 });
